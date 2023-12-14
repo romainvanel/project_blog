@@ -52,6 +52,7 @@ if (!empty($_POST['email']) && !empty($_POST['password'])) {
     // Vérification de l'email et vérification du mot de passe
     if ($user && password_verify($password, $user['password'])) {
             // Redirection vers le fichier "dashboard.php
+            $_SESSION['user'] = $user;
             header("Location: dashboard.php");
             exit;
     } else {

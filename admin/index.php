@@ -1,6 +1,13 @@
 <?php
 // Démarrage de la session
 session_start();
+
+// Redirige l'utilisateur sur dashboard si il est déjà connecté
+if (isset($_SESSION['user'])) {
+    header('Location: dashboard.php');
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,20 +20,7 @@ session_start();
     </head>
     <body>
         <div class="container-fluid text-center">
-            <h1>Connexion à l'administration</h1>
-
-            <!-- Mes erreurs -->
-            <?php
-                if (isset($_SESSION['error'])):
-            ?>
-            <div class="alert alert-danger">
-                <?php echo $_SESSION['error']; ?>
-            </div>
-            <?php
-                unset($_SESSION['error']);
-                endif
-            ?>  
-
+            <h1 class="p-3">Connexion à l'administration</h1>
             <div class="w-50 m-auto border rounded p-3">
                 <form action="login.php" method="post" class="d-flex flex-column w-100">
                     <div class="mb-3">
@@ -39,7 +33,17 @@ session_start();
                     </div>
                     <button class="btn btn-primary">Se connecter</button>
 
-
+                    <!-- Mes erreurs -->
+                    <?php
+                        if (isset($_SESSION['error'])):
+                    ?>
+                    <div class="alert alert-danger mt-3">
+                        <?php echo $_SESSION['error']; ?>
+                    </div>
+                    <?php
+                        unset($_SESSION['error']);
+                        endif;
+                    ?>  
 
                 </form>
             </div>
