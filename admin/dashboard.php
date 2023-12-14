@@ -9,6 +9,20 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
+// Connexion à la base de données
+require_once '../connexion.php';
+$bdd = connectBdd('root', 'root', 'blog_db');
+
+// Sélectionne tous les articles avec leurs catégories
+// $selectArticles = $bdd->prepare("SELECT articles.id, articles.title, GROUP_CONCAT(categories.name? ', ') AS categories, articles.publication_date FROM users LEFT JOIN articles ON articles.user_id = users.id LEFT JOIN articles_categories ON articles_categories.article_id = articles.id LEFT JOIN categories ON categories.id = articles_categories.category_id WHERE users.email = :user_email GROUP BY articles.id ");
+// $selectArticles->bindValue(':user_email', $_SESSION['user']['email']);
+// $selectArticles->execute();
+
+$selectArticles = $bdd->query("SELECT articles.id, articles.title, articles.publication_date, GROUP_CONCAT(categories.name, ', ') AS categories FROM articles LEFT JOIN articles_categories ON articles_categories.article_id = articles.id LEFT JOIN categories ON categories.id = articles_categories.category_id GROUP BY articles.id;");
+
+$articles = $selectArticles->fetchAll();
+
+
 ?>
 
 <!DOCTYPE html>
@@ -22,5 +36,48 @@ if (!isset($_SESSION['user'])) {
     <body>
         <h1>Administration</h1>
         <a href="logout.php">Déconnexion</a>
+
+        <p>
+            Ici afficher un tableau contenant tous les articles avec les données suivantes : 
+            ID, Titre, Catégorie, Date de publication et une colonne "actions"
+        </p>
+        <p>
+            La colonne "actions" contiendra 2 liens : Editer et Supprimer."
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Titre</th>
+                    <th>Catégorie</th>
+                    <th>Date de publication</th>
+                    <th colspan="2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach($articles as $article):  
+                ?>
+                    <tr>
+                        <td><?php echo $article['id'];?></td>
+                        <td><?php echo $article['title'];?></td>
+                        <td><?php echo $article['categories'];?></td>
+                        <td>
+                            <?php 
+                            // Formatage de la date
+                                // On analyse la date que l'on a récupéré
+                                $date = DateTime::createFromFormat('Y-m-d H:i:s', $article['publication_date']);
+                                // Format de sortie
+                                echo $date->format('d.m.Y');
+                            ?>
+                        </td>
+                        <td><a href="">Editer</a></td>
+                        <td><a href="">Supprimer</a></td>
+                    </tr>
+                <?php endforeach;?>
+            </tbody>
+        </table>
+
     </body>
 </html>
