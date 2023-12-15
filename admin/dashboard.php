@@ -29,23 +29,26 @@ $articles = $selectArticles->fetchAll();
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Administration</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     </head>
     <body>
         <h1>Administration</h1>
         <a href="logout.php">Déconnexion</a>
 
-        <p>
-            Ici afficher un tableau contenant tous les articles avec les données suivantes : 
-            ID, Titre, Catégorie, Date de publication et une colonne "actions"
-        </p>
-        <p>
-            La colonne "actions" contiendra 2 liens : Editer et Supprimer."
-        </p>
+                    <!-- Message de succès -->
+                    <?php if(isset($_SESSION['success'])): ?>
+                <div class="alert alert-success">
+                    <?php 
+                        echo $_SESSION['success']; 
+                        unset($_SESSION['success']);
+                    ?>
+                </div>
+            <?php endif; ?>
 
-        <table>
+        <table class="table">
             <thead>
                 <tr>
-                    <th>id</th>
+                    <th>Id</th>
                     <th>Titre</th>
                     <th>Catégorie</th>
                     <th>Date de publication</th>
@@ -70,8 +73,20 @@ $articles = $selectArticles->fetchAll();
                                 echo $date->format('d.m.Y');
                             ?>
                         </td>
-                        <td><a href="edit.php?id=<?php echo $article['id'];?>">Editer</a></td>
-                        <td><a href="">Supprimer</a></td>
+                        <td>
+                            <a href="edit.php?id=<?php echo $article['id'];?>" class="btn btn-outline-success fw-bold">Editer</a>
+                        </td>
+                        <td>
+                            <a href="delete_article.php?id=<?php echo $article['id'];?>" class="btn btn-outline-danger fw-bold" onclick="return confirmSuppression()">Supprimer</a>
+                        </td>
+
+                        <!-- Fonction JS pour afficher une confirmation de suppression -->
+                        <script>
+                        function confirmSuppression() {
+                            return confirm("Êtes-vous sûr de vouloir supprimer cet enregistrement ?");
+                        }
+                        </script>
+
                     </tr>
                 <?php endforeach;?>
             </tbody>
