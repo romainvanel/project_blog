@@ -14,7 +14,7 @@ require_once '../connexion.php';
 $bdd = connectBdd('root', 'root', 'blog_db');
 
 // Sélectionne tous les articles avec leurs catégories
-$selectArticles = $bdd->prepare("SELECT articles.id, articles.title, articles.publication_date, GROUP_CONCAT(categories.name, ', ') AS categories FROM articles LEFT JOIN articles_categories ON articles_categories.article_id = articles.id LEFT JOIN categories ON categories.id = articles_categories.category_id 
+$selectArticles = $bdd->prepare("SELECT articles.id, articles.title, articles.publication_date, GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories FROM articles LEFT JOIN articles_categories ON articles_categories.article_id = articles.id LEFT JOIN categories ON categories.id = articles_categories.category_id 
 WHERE user_id = :id GROUP BY articles.id;");
 $selectArticles->bindValue(':id', $_SESSION['user']['id']);
 $selectArticles->execute();

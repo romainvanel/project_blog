@@ -66,8 +66,29 @@ $articlesCategories = $query->fetchAll(PDO::FETCH_COLUMN);
     <body>
         <div class="container-fluid text-center">
             <h1 class="p-3">Edition</h1>
+
+            <!-- Message de succès -->
+            <?php if(isset($_SESSION['success'])): ?>
+                <div class="alert alert-success">
+                    <?php 
+                        echo $_SESSION['success']; 
+                        unset($_SESSION['success']);
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- Message d'erreurs' -->
+            <?php if(isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger">
+                    <?php 
+                        echo $_SESSION['error']; 
+                        unset($_SESSION['error']);
+                    ?>
+                </div>
+            <?php endif; ?>
+
             <div class="w-50 m-auto border rounded p-3">
-                <form action="login.php" method="post" enctype="multipart/form-data" class="d-flex flex-column w-100">
+                <form action="update_article.php?id=<?php echo $article['id']; ?>" method="post" enctype="multipart/form-data" class="d-flex flex-column w-100">
                     <div class="mb-3">
                         <label for="title" class="form-label">Titre</label>
                         <input type="text" class="form-control" id="title" name="title" value="<?php echo $article['title']; ?>">
@@ -84,17 +105,17 @@ $articlesCategories = $query->fetchAll(PDO::FETCH_COLUMN);
                         <label for="categories" class="form-label">State</label>
                         <select class="form-select" multiple aria-label="Multiple select example" id="categories" name="categories[]">
                             <?php foreach($categories as $category): ?>
-                                <option value="
-                                    <?php echo $category['id']; ?>" 
+                                <option 
+                                    value="<?php echo $category['id']; ?>" 
                                     <?php echo in_array($category['id'], $articlesCategories) ? 'selected' : '' ?>
                                 >
-                                <?php echo $category['name']; ?>
+                                    <?php echo $category['name']; ?>
                                 </option>
                             <?php endforeach; ?>
 
                         </select>
                     </div>
-                    <button class="btn btn-primary">Se connecter</button>
+                    <button class="btn btn-primary">Editer</button>
 
                 </form>
             </div>
