@@ -14,15 +14,12 @@ require_once '../connexion.php';
 $bdd = connectBdd('root', 'root', 'blog_db');
 
 // Sélectionne tous les articles avec leurs catégories
-// $selectArticles = $bdd->prepare("SELECT articles.id, articles.title, GROUP_CONCAT(categories.name? ', ') AS categories, articles.publication_date FROM users LEFT JOIN articles ON articles.user_id = users.id LEFT JOIN articles_categories ON articles_categories.article_id = articles.id LEFT JOIN categories ON categories.id = articles_categories.category_id WHERE users.email = :user_email GROUP BY articles.id ");
-// $selectArticles->bindValue(':user_email', $_SESSION['user']['email']);
-// $selectArticles->execute();
-
-$selectArticles = $bdd->query("SELECT articles.id, articles.title, articles.publication_date, GROUP_CONCAT(categories.name, ', ') AS categories FROM articles LEFT JOIN articles_categories ON articles_categories.article_id = articles.id LEFT JOIN categories ON categories.id = articles_categories.category_id GROUP BY articles.id;");
+$selectArticles = $bdd->prepare("SELECT articles.id, articles.title, articles.publication_date, GROUP_CONCAT(categories.name, ', ') AS categories FROM articles LEFT JOIN articles_categories ON articles_categories.article_id = articles.id LEFT JOIN categories ON categories.id = articles_categories.category_id 
+WHERE user_id = :id GROUP BY articles.id;");
+$selectArticles->bindValue(':id', $_SESSION['user']['id']);
+$selectArticles->execute();
 
 $articles = $selectArticles->fetchAll();
-
-
 ?>
 
 <!DOCTYPE html>
@@ -57,7 +54,8 @@ $articles = $selectArticles->fetchAll();
             </thead>
             <tbody>
                 <?php
-                foreach($articles as $article):  
+                foreach($articles as $article): 
+                $_SESSION['articleID'] = "articleID"; 
                 ?>
                     <tr>
                         <td><?php echo $article['id'];?></td>
@@ -72,7 +70,7 @@ $articles = $selectArticles->fetchAll();
                                 echo $date->format('d.m.Y');
                             ?>
                         </td>
-                        <td><a href="">Editer</a></td>
+                        <td><a href="edit.php?id=<?php echo $article['id'];?>">Editer</a></td>
                         <td><a href="">Supprimer</a></td>
                     </tr>
                 <?php endforeach;?>
