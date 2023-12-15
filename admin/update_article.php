@@ -17,6 +17,9 @@
 // Démarrer une session
 session_start();
 
+// Charger les dépendances PHP
+require_once '../vendor/autoload.php';
+
 // Vérifie si l'utilisateur peut accéder à cette page (pour chaque page que l'on veut protéger)
 if (!isset($_SESSION['user'])) {
     header('Location: index.php');
@@ -43,12 +46,71 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
     $articleId = $_GET['id'];  
 
     // Vérifier si le formulaire est complet
-    if (!empty($title) && !empty($content)) {        
-    
+    if (!empty($title) && !empty($content)) {
+
+        // Sélectionner le nom de l'image actuellement en BDD
+        $selectCoverQuery = $bdd->prepare("SELECT cover FROM articles WHERE id = :id");
+        $selectCoverQuery->bindValue(':id', $articleId);
+        $selectCoverQuery->execute();
+
+        // Récupération de la valeur de la colonne et stockage de l'info dans une variable
+        $cover = $selectCoverQuery->fetchColumn();
+
+        // Vérifie si un upload doit être fait
+        if (isset($_FILES['cover']) && $_FILES['cover']['error'] === UPLOAD_ERR_OK) {
+            
+            $maxSize = 1 * 1024 * 1024;
+
+            // Tableau contenant les extensions et les types MIMES autorisés
+            $typeImage = [
+                'png' => 'image/png',
+                'jpg' => 'image/jpeg',
+                'jpeg' => 'image/jpeg',
+                'webp' => 'image/webp'
+            ];
+
+            // Extraction de l'extension de l'image
+            $extension = strtolower(pathinfo($_FILES['cover']['name'], PATHINFO_EXTENSION));
+
+            // Vérifier si le fichier est une image autorisée
+            if (array_key_exists($extension, $typeImage) && in_array($_FILES['cover']['type'], $typeImage)) {
+
+                //Vérifier si le poids est correct
+                if ($_FILES['cover']['size'] <= $maxSize) {
+
+                    // Supprime l'ancienne image
+                    if (file_exists("../public/uploads/$cover")) {
+                        // Supprime l'image à l'endroit indiqué
+                        unlink("../public/uploads/$cover");
+                    }
+
+                    // Renomme le nom de l'image
+                    $slugify = new \Cocur\Slugify\Slugify();
+                    $newName = $slugify->slugify("$title-$articleId");
+                    $cover = "$newName.$extension";
+
+                    // Télécharge la nouvelle image sous le nouveau nom
+                    move_uploaded_file(
+                        $_FILES['cover']['tmp_name'],
+                        "../public/uploads/$cover"
+                    );
+
+                } else {
+                    $_SESSION['error'] = "Le poids de l'image ne doit pas excéder 1Mo";
+                    header("Location: edit.php?id=$articleId");
+                    exit;
+                }
+            } else {
+                $_SESSION['error'] = "Votre fichier n'est pas une image autorisée";
+                header("Location: edit.php?id=$articleId");
+            }
+        }
+        
         // Mise à jour du titre et du contenu dans la base de données
-        $updateTitle = $bdd->prepare("UPDATE articles SET title = :title, content = :content WHERE id = :id");
+        $updateTitle = $bdd->prepare("UPDATE articles SET title = :title, content = :content, cover = :cover WHERE id = :id");
         $updateTitle->bindValue(':title', $title);
         $updateTitle->bindValue(':content', $content);        
+        $updateTitle->bindValue(':cover', $cover);        
         $updateTitle->bindValue(':id', $articleId);        
         $updateTitle->execute();
 

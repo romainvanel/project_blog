@@ -98,8 +98,8 @@ $articlesCategories = $query->fetchAll(PDO::FETCH_COLUMN);
                         <textarea class="form-control" id="content" name="content" rows="20"><?php echo $article['content'];?></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="image" class="form-label">Image de couverture</label>
-                        <input class="form-control" type="file" id="image" name="image">
+                        <label for="cover" class="form-label">Image de couverture</label>
+                        <input class="form-control" type="file" id="cover" name="cover">
                     </div>
                     <div class="mb-3">
                         <label for="categories" class="form-label">State</label>
