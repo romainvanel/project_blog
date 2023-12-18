@@ -35,16 +35,18 @@ $articles = $selectArticles->fetchAll();
         <h1>Administration</h1>
         <a href="logout.php">Déconnexion</a>
 
-                    <!-- Message de succès -->
-                    <?php if(isset($_SESSION['success'])): ?>
-                <div class="alert alert-success">
-                    <?php 
-                        echo $_SESSION['success']; 
-                        unset($_SESSION['success']);
-                    ?>
-                </div>
-            <?php endif; ?>
-
+        <!-- Message de succès -->
+        <?php if(isset($_SESSION['success'])): ?>
+            <div class="alert alert-success">
+                <?php 
+                    echo $_SESSION['success']; 
+                    unset($_SESSION['success']);
+                ?>
+            </div>
+        <?php endif; ?>
+        
+        <a href="add.php" class="btn fw-bold">Nouvel article</a>
+        
         <table class="table">
             <thead>
                 <tr>
@@ -72,7 +74,7 @@ $articles = $selectArticles->fetchAll();
                                 // Format de sortie
                                 echo $date->format('d.m.Y');
                             ?>
-                        </td>
+                        </td>                       
                         <td>
                             <a href="edit.php?id=<?php echo $article['id'];?>" class="btn btn-outline-success fw-bold">Editer</a>
                         </td>

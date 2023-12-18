@@ -46,7 +46,7 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
     $articleId = $_GET['id'];  
 
     // Vérifier si le formulaire est complet
-    if (!empty($title) && !empty($content)) {
+    if (!empty($title) && !empty($content) &&! empty($categories)) {
 
         // Sélectionner le nom de l'image actuellement en BDD
         $selectCoverQuery = $bdd->prepare("SELECT cover FROM articles WHERE id = :id");
