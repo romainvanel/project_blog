@@ -42,7 +42,7 @@ $categories = $selectCategories->fetchALL();
 
 // Selection de toutes les catégories liées à l'article
 $query = $bdd->prepare("SELECT category_id FROM articles_categories WHERE article_id = :id");
-$query->bindValue('id', $articleId);
+$query->bindValue(':id', $articleId);
 $query->execute();
 
 /**

@@ -5,7 +5,7 @@ require_once './connexion.php';
 $bdd = connectBdd('root', 'root', 'blog_db');
 
 // Sélection des informations concernant l'article
-$selectArticles = $bdd->query("SELECT articles.title, articles.content, articles.cover, articles.publication_date, users.name as author, GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories FROM articles LEFT JOIN articles_categories ON articles_categories.article_id = articles.id LEFT JOIN categories ON categories.id = articles_categories.category_id LEFT JOIN users ON users.id = articles.user_id GROUP BY articles.id ORDER BY articles.publication_date DESC");
+$selectArticles = $bdd->query("SELECT articles.id, articles.title, articles.content, articles.cover, articles.publication_date, users.name as author, GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories FROM articles LEFT JOIN articles_categories ON articles_categories.article_id = articles.id LEFT JOIN categories ON categories.id = articles_categories.category_id LEFT JOIN users ON users.id = articles.user_id GROUP BY articles.id ORDER BY articles.publication_date DESC");
 $selectArticles->execute();
 
 $articles = $selectArticles->fetchAll();
@@ -26,7 +26,7 @@ foreach ($articles as $key => $article) {
 <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Administration</title>
+        <title>Blog</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
@@ -79,7 +79,7 @@ foreach ($articles as $key => $article) {
 
                 <!-- lien vers l'article complet -->
                 <div class="d-flex justify-content-end">
-                    <a href="#" class="btn btn-primary">Lire plus</a>
+                    <a href="article.php?id=<?php echo $article['id']?>" class="btn btn-primary">Lire plus</a>
                 </div>
             </article>
         <?php endforeach; ?>
