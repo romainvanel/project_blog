@@ -15,7 +15,7 @@ $bdd = connectBdd('root', 'root', 'blog_db');
 
 // Sélectionne tous les articles avec leurs catégories
 $selectArticles = $bdd->prepare("SELECT articles.id, articles.title, articles.publication_date, GROUP_CONCAT(categories.name SEPARATOR ', ') AS categories FROM articles LEFT JOIN articles_categories ON articles_categories.article_id = articles.id LEFT JOIN categories ON categories.id = articles_categories.category_id 
-WHERE user_id = :id GROUP BY articles.id;");
+WHERE user_id = :id GROUP BY articles.id ORDER BY articles.publication_date DESC");
 $selectArticles->bindValue(':id', $_SESSION['user']['id']);
 $selectArticles->execute();
 
@@ -44,8 +44,10 @@ $articles = $selectArticles->fetchAll();
                 ?>
             </div>
         <?php endif; ?>
-        
-        <a href="add.php" class="btn fw-bold">Nouvel article</a>
+
+        <div class="d-flex justify-content-end">
+            <a href="add.php" class="btn btn-primary fw-bold">Nouvel article</a>
+        </div>
         
         <table class="table">
             <thead>
