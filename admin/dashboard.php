@@ -77,16 +77,8 @@ $articles = $selectArticles->fetchAll();
                             <a href="edit.php?id=<?php echo $article['id'];?>" class="btn btn-outline-success fw-bold">Editer</a>
                         </td>
                         <td>
-                            <a href="delete_article.php?id=<?php echo $article['id'];?>" class="btn btn-outline-danger fw-bold" onclick="return confirmSuppression()">Supprimer</a>
+                            <a href="delete_article.php?id=<?php echo $article['id'];?>" class="btn btn-outline-danger fw-bold" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement ?')">Supprimer</a>
                         </td>
-
-                        <!-- Fonction JS pour afficher une confirmation de suppression -->
-                        <script>
-                        function confirmSuppression() {
-                            return confirm("Êtes-vous sûr de vouloir supprimer cet enregistrement ?");
-                        }
-                        </script>
-
                     </tr>
                 <?php endforeach;?>
             </tbody>
